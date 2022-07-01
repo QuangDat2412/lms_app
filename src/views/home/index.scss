@@ -1,0 +1,25 @@
+.nav-bar-lesson {
+    background-color: #fff;
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    color: #ccc !important;
+    display: flex;
+    border-bottom: 1px #ccc solid;
+    justify-content: space-between;
+    padding: 10px 40px 10px 20px;
+    & > div {
+        font-size: 18px;
+        font-weight: 700;
+        margin-left: 16px;
+        overflow: hidden;
+    }
+    svg {
+        width: 35px !important;
+        margin-right: 10px;
+    }
+}
+.box {
+    height: 100vh;
+    overflow: hidden;
+}
