@@ -2,11 +2,16 @@ import React from 'react';
 import { CAvatar, CDropdown, CDropdownDivider, CDropdownHeader, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react';
 import { cilLockLocked, cilSettings, cilUser } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { useSelector } from 'react-redux';
-import { authSelector } from 'src/redux/auth/auth.slice';
+import { authSelector, authActions } from 'src/redux/auth/auth.slice';
+import { useSelector, useDispatch } from 'react-redux';
 
 const AppHeaderDropdown = () => {
+    const dispatch = useDispatch();
     const currentUser = useSelector(authSelector.currentUser);
+    const logout = (e) => {
+        e.preventDefault();
+        dispatch(authActions.logout());
+    };
     return (
         <CDropdown variant="nav-item">
             <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
@@ -24,9 +29,14 @@ const AppHeaderDropdown = () => {
                     Settings
                 </CDropdownItem>
                 <CDropdownDivider />
-                <CDropdownItem href="#">
+                <CDropdownItem
+                    href="#"
+                    onClick={(e) => {
+                        logout(e);
+                    }}
+                >
                     <CIcon icon={cilLockLocked} className="me-2" />
-                    Log Out
+                    Đăng xuất
                 </CDropdownItem>
             </CDropdownMenu>
         </CDropdown>

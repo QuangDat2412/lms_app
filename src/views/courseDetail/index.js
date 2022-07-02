@@ -19,6 +19,8 @@ import {
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilClock, cilBook, cilMovie } from '@coreui/icons';
+import AppHeader from '../../components/AppHeader';
+
 import './index.scss';
 const CourseDetail = () => {
     const header = useRef();
@@ -28,19 +30,21 @@ const CourseDetail = () => {
     const code = currentLocation.split('/')[2];
     const dispatch = useDispatch();
     const course = useSelector(courseSelector.course);
-    const listLearn = useSelector(courseSelector.listLearn);
+    const learn = useSelector(courseSelector.learn);
     const currentUser = useSelector(authSelector.currentUser);
-    const formRegister = { userId: currentUser._id, courseId: course._id };
+    const formRegister = { userId: currentUser?._id, courseId: course?._id };
     useEffect(() => {
         if (code) {
             dispatch(courseActions.getCourseByCode({ code: code }));
-            dispatch(courseActions.getLearning(currentUser));
         }
-    }, [dispatch, code, currentUser]);
+    }, [dispatch, code]);
     useEffect(() => {
-        let a = listLearn.find((x) => x.courseId === course._id);
-        setIsRegister(a);
-    }, [listLearn, course]);
+        debugger;
+        dispatch(courseActions.getLearning({ userId: currentUser?._id, courseId: course?._id }));
+    }, [dispatch, course, currentUser]);
+    useEffect(() => {
+        setIsRegister(learn?._id);
+    }, [learn, course]);
     let listTopics = course.listTopics || [];
     let total = 0;
     listTopics = listTopics.map((t, i) => {
@@ -76,7 +80,12 @@ const CourseDetail = () => {
         }
     }
     const registerCourse = () => {
-        dispatch(courseActions.registerCourse(formRegister));
+        if (currentUser?._id) {
+            dispatch(courseActions.registerCourse(formRegister));
+            goLearning();
+        } else {
+            navigate('/login', { replace: true });
+        }
     };
     const goLearning = () => {
         navigate('/learning/' + code, { replace: true });
@@ -84,19 +93,14 @@ const CourseDetail = () => {
     return (
         <>
             <CRow xs={{ gutter: 0 }} className="box">
-                <CCol ref={header} className="nav-bar-lesson">
-                    <div>alo</div>
-                    <CHeaderNav className="ms-3">
-                        <AppHeaderDropdown />
-                    </CHeaderNav>
-                </CCol>
+                <AppHeader />
                 <CCol
                     lg="8"
                     className="course-detail"
                     xs="12"
                     style={{
-                        marginTop: `${header.current?.clientHeight}px`,
-                        height: `calc(100vh - ${header.current?.clientHeight}px )`,
+                        marginTop: `64px`,
+                        height: `calc(100vh - 64px )`,
                         overflowY: 'overlay',
                         padding: '20px 50px 0',
                     }}
@@ -186,11 +190,11 @@ const CourseDetail = () => {
                         <CCol lg="12" className="d-flex justify-content-center mt-3">
                             {isRegister ? (
                                 <div className="px-4 py-2 btn-action" onClick={goLearning}>
-                                    HỌC NGAY
+                                    Học tiếp
                                 </div>
                             ) : (
                                 <div className="px-4 py-2 btn-action" onClick={registerCourse}>
-                                    DANG KY NGAY
+                                    Đăng ký
                                 </div>
                             )}
                         </CCol>

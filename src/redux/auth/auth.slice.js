@@ -15,9 +15,8 @@ const authSlice = createSlice({
         login(state) {},
         googleLogin(state) {},
         logout(state) {
-            localStorage.removeItem('token');
-            state.token = null;
-            state.user = {};
+            localStorage.removeItem('currentUser');
+            state.currentUser = {};
         },
     },
 });

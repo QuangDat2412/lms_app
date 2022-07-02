@@ -9,8 +9,6 @@ const loading = (
 );
 
 // Containers
-const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
-
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'));
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
@@ -29,7 +27,6 @@ class App extends Component {
                         <Route exact path="/" name="Home Page" element={<Home />} />
                         <Route exact path="/learning/:code" name="Learning Page" element={<Learning />} />
                         <Route exact path="/404" name="Page 404" element={<Page404 />} />
-                        <Route path="*" name="Trang chủ" element={<DefaultLayout />} />
                     </Routes>
                 </Suspense>
             </BrowserRouter>

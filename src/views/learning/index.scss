@@ -28,7 +28,6 @@
         }
     }
     .btn-lesson {
-        border: 0 !important;
         padding-left: 20px;
         &:hover {
             background-color: #f0ddbb !important;
@@ -72,4 +71,12 @@
 .box {
     height: 100vh;
     overflow: hidden;
+}
+.box-iframe {
+    width: 100%;
+    height: 100%;
+    iframe {
+        width: 100%;
+        height: 100%;
+    }
 }
