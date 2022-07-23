@@ -41,9 +41,7 @@
 .box-player-doc {
     display: flex;
     justify-content: center;
-    & > div {
-        width: 85%;
-    }
+    width: 100%;
 }
 .nav-bar-lesson {
     background-color: #29303b;

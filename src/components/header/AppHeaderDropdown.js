@@ -18,15 +18,15 @@ const AppHeaderDropdown = () => {
                 <CAvatar src={currentUser?.avatar} size="md" />
             </CDropdownToggle>
             <CDropdownMenu className="pt-0" placement="bottom-end">
-                <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
-                <CDropdownItem href="#">
+                <CDropdownHeader className="bg-light fw-semibold py-2">{currentUser?.fullName}</CDropdownHeader>
+                <CDropdownItem href="/profile">
                     <CIcon icon={cilUser} className="me-2" />
-                    {currentUser?.fullName}
+                    Trang cá nhân
                 </CDropdownItem>
                 <CDropdownDivider />
                 <CDropdownItem href="#">
                     <CIcon icon={cilSettings} className="me-2" />
-                    Settings
+                    Cài đặt
                 </CDropdownItem>
                 <CDropdownDivider />
                 <CDropdownItem

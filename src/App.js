@@ -14,6 +14,7 @@ const Login = React.lazy(() => import('./views/pages/login/Login'));
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'));
 const Learning = React.lazy(() => import('./views/learning'));
 const Home = React.lazy(() => import('./views/home'));
+const Profile = React.lazy(() => import('./views/profile'));
 const CourseDetails = React.lazy(() => import('./views/courseDetail'));
 
 class App extends Component {
@@ -22,6 +23,7 @@ class App extends Component {
             <BrowserRouter>
                 <Suspense fallback={loading}>
                     <Routes>
+                        <Route exact path="/profile" name="Trang cá nhân" element={<Profile />} />
                         <Route exact path="/login" name="Login Page" element={<Login />} />
                         <Route exact path="/courses/:code" name="Chi tiết khóa" element={<CourseDetails />} />
                         <Route exact path="/" name="Home Page" element={<Home />} />

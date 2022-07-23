@@ -54,18 +54,15 @@ const AppHeader = () => {
     return (
         <CHeader position="sticky" style={{ color: '#fff !important' }}>
             <CContainer fluid>
-                <CHeaderBrand to="/">
-                    <img src={logo} height={48} alt="Logo" />
+                <CHeaderBrand
+                    to="/"
+                    onClick={() => {
+                        navigate('/', { replace: true });
+                    }}
+                >
+                    <img src={logo} height={48} alt="Logo" style={{ cursor: 'pointer' }} />
                 </CHeaderBrand>
-                <CHeaderNav className="d-none d-md-flex me-auto">
-                    <CNavItem>
-                        <a href="/" style={{ textDecoration: 'none', color: '#000' }}>
-                            <h6 className="m-0" style={{ fontWeight: 'bold' }}>
-                                Trang chủ
-                            </h6>
-                        </a>
-                    </CNavItem>
-                </CHeaderNav>
+                <CHeaderNav className="d-none d-md-flex me-auto"></CHeaderNav>
                 <CHeaderNav className="d-none d-md-flex me-auto">
                     <CPopover
                         content={<RenderItem data={courses} />}

@@ -85,12 +85,12 @@ const Login = () => {
                                             <CRow>
                                                 <CCol xs={6}>
                                                     <CButton color="primary" className="px-4" type="submit">
-                                                        Login
+                                                        Đăng nhập
                                                     </CButton>
                                                 </CCol>
                                                 <CCol xs={6} className="text-right">
                                                     <CButton color="link" className="px-0">
-                                                        Forgot password?
+                                                        Quên mật khẩu
                                                     </CButton>
                                                 </CCol>
                                             </CRow>
@@ -116,6 +116,7 @@ const Login = () => {
                                                     onSuccess={responseSuccessGoogle}
                                                     onFailure={responseErrorGoogle}
                                                     cookiePolicy={'single_host_origin'}
+                                                    className="google"
                                                 />
                                             </CCol>
                                         </CRow>

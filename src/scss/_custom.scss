@@ -35,6 +35,10 @@ body {
             padding-top: 6px !important;
         }
     }
+    button:hover {
+        color: #35414c;
+        opacity: 0.65;
+    }
     div + div {
         margin-top: 20px;
     }
@@ -75,6 +79,7 @@ html ::-webkit-scrollbar {
 }
 .player-doc {
     padding-top: 56.25%;
+    width: 100%;
     position: relative;
     .player {
         position: absolute;
@@ -175,5 +180,22 @@ html ::-webkit-scrollbar {
             height: 100%;
             object-fit: cover;
         }
+    }
+}
+.wrapword {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    display: -webkit-box;
+}
+.google {
+    span {
+        display: block;
+        flex: 1;
+        margin-left: -24px;
+        color: '#35414c';
     }
 }

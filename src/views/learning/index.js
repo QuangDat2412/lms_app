@@ -21,7 +21,10 @@ import { useNavigate } from 'react-router-dom';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { authSelector } from 'src/redux/auth/auth.slice';
-import YouTube from 'react-youtube';
+import ReactHlsPlayer from 'react-hls-player';
+import { DOMAIN } from '../../constants/api';
+import CIcon from '@coreui/icons-react';
+import { cilChevronLeft } from '@coreui/icons';
 const Learning = () => {
     const currentLocation = useLocation().pathname;
     let navigate = useNavigate();
@@ -120,7 +123,12 @@ const Learning = () => {
         <>
             <CRow xs={{ gutter: 0 }} className="box">
                 <CCol ref={header} className="nav-bar-lesson">
-                    <div>{course?.name}</div>
+                    <div>
+                        <a href="/" style={{ textDecoration: 'none', color: '#fff' }}>
+                            <CIcon icon={cilChevronLeft} />
+                        </a>
+                        {course?.name}
+                    </div>
                     <span>
                         <CircularProgressbar
                             value={
@@ -158,32 +166,24 @@ const Learning = () => {
                     }}
                 >
                     <div className="box-player-doc" style={{ backgroundColor: ' #000' }}>
-                        <div>
-                            <div className="player-doc">
-                                <div className="player">
-                                    <YouTube
-                                        videoId={lesson?.url}
-                                        id={lesson?.name}
-                                        className="box-iframe"
-                                        onEnd={(a) => {
-                                            done();
-                                        }}
-                                    />
-                                    {/* <iframe
-                                        width="100%"
-                                        height="100%"
-                                        ref={video}
-                                        src={lesson?.url}
-                                        title={lesson?.name}
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                    ></iframe> */}
-                                </div>
+                        <div className="player-doc">
+                            <div className="player">
+                                <ReactHlsPlayer
+                                    onEnded={(a) => {
+                                        debugger;
+                                        done();
+                                    }}
+                                    src={DOMAIN + lesson.url}
+                                    id={lesson?.name}
+                                    width="100%"
+                                    height="100%"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="box-player-doc mt-4" style={{ minHeight: '500px' }}>
-                        <div>
+                        <div style={{ width: '80%' }}>
                             <h4>
                                 <strong>{lesson?.name}</strong>
                             </h4>
