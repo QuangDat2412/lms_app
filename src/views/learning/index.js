@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     CCol,
     CRow,
@@ -11,8 +12,10 @@ import {
     CTableRow,
     CTableDataCell,
 } from '@coreui/react';
+import { Avatar, Button, Comment, Form, Input, List } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
+import { commentActions, commentSelector } from 'src/redux/comment/comment.slice';
 import { useLocation } from 'react-router-dom';
 import clock from '../../assets/icon-lesson/Icon.svg';
 import doneImg from '../../assets/done.png';
@@ -21,35 +24,46 @@ import { useNavigate } from 'react-router-dom';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { authSelector } from 'src/redux/auth/auth.slice';
-import ReactHlsPlayer from 'react-hls-player';
-import { DOMAIN } from '../../constants/api';
+import VideoPlayer from './video';
 import CIcon from '@coreui/icons-react';
 import { cilChevronLeft } from '@coreui/icons';
+import socketIOClient from 'socket.io-client';
+const host = 'http://localhost:2412';
+const { TextArea } = Input;
+
 const Learning = () => {
     const currentLocation = useLocation().pathname;
     let navigate = useNavigate();
-
+    const [get, setGet] = useState(0);
     const [lesson, setLesson] = useState({});
     const [tCount, setTCount] = useState([]);
-    const code = currentLocation.split('/')[2];
     const dispatch = useDispatch();
     const course = useSelector(courseSelector.course);
     const learn = useSelector(courseSelector.learn);
     const currentUser = useSelector(authSelector.currentUser);
+    const socketRef = useRef();
 
+    useEffect(() => {
+        const code = currentLocation.split('/')[2];
+        if (code) {
+            dispatch(courseActions.getCourseByCode({ code: code }));
+        }
+        socketRef.current = socketIOClient.connect(host);
+        socketRef.current.on('getMessage', (users) => {
+            setGet((p) => p + 1);
+        });
+        return () => {
+            socketRef.current.disconnect();
+        };
+    }, []);
     useEffect(() => {
         if (!currentUser?._id && course.code) {
             navigate('/courses/' + course.code, { replace: true });
         }
-    }, [currentUser, navigate, course]);
-    useEffect(() => {
-        if (code) {
-            dispatch(courseActions.getCourseByCode({ code: code }));
-        }
-    }, [dispatch, code]);
-    useEffect(() => {
         dispatch(courseActions.getLearning({ userId: currentUser?._id, courseId: course?._id }));
-    }, [dispatch, course, currentUser]);
+        if (currentUser._id && course._id) socketRef.current.emit('addUser', { userId: currentUser._id, courseId: course._id });
+    }, [currentUser, navigate, course, dispatch]);
+
     let listTopics = course.listTopics || [];
     let total = 0;
     listTopics = listTopics.map((t, i) => {
@@ -57,41 +71,43 @@ const Learning = () => {
         total = total + t.listLessons.length;
         return { ...t, listLessons: ll };
     });
-    useEffect(() => {
-        let listId = learn?.listLessonId || [];
-        let lessonIdx = -1;
-        setTCount([]);
-        let topicIdx = listTopics.findIndex((t, i) => {
-            lessonIdx = t.listLessons.findIndex((l) => l._id === listId[listId.length - 1]);
-            let count;
-            if (lessonIdx >= 0) count = lessonIdx + 1;
-            setTCount((p) => {
-                return [...p, count || 0];
-            });
-            return lessonIdx >= 0;
-        });
-
-        if (lessonIdx === listTopics[topicIdx]?.listLessons.length) {
-            if (topicIdx === listTopics.length) {
-                topicIdx = 0;
-                lessonIdx = 0;
-            } else {
-                topicIdx = topicIdx + 1;
-                lessonIdx = 0;
-            }
-        } else {
-            if (!(topicIdx >= 0)) topicIdx = 0;
-            if (!(lessonIdx >= 0)) {
-                lessonIdx = 0;
-            } else {
-                lessonIdx = lessonIdx + 1;
-            }
-        }
-        setLesson({ ...listTopics[topicIdx]?.listLessons[lessonIdx], topicIdx: topicIdx, lessonIdx: lessonIdx });
-    }, [course, learn]);
     const lessonCount = listTopics.reduce((p, n) => {
         return p + n.listLessons.length;
     }, 0);
+    useEffect(() => {
+        if (learn._id) {
+            let listId = learn?.listLessonId || [];
+            let lessonIdx = -1;
+            setTCount([]);
+            let topicIdx = listTopics.findIndex((t, i) => {
+                lessonIdx = t.listLessons.findIndex((l) => l._id === listId[listId.length - 1]);
+                let count;
+                if (lessonIdx >= 0) count = lessonIdx + 1;
+                setTCount((p) => {
+                    return [...p, count || 0];
+                });
+                return lessonIdx >= 0;
+            });
+
+            if (lessonIdx === listTopics[topicIdx]?.listLessons.length) {
+                if (topicIdx === listTopics.length) {
+                    topicIdx = 0;
+                    lessonIdx = 0;
+                } else {
+                    topicIdx = topicIdx + 1;
+                    lessonIdx = 0;
+                }
+            } else {
+                if (!(topicIdx >= 0)) topicIdx = 0;
+                if (!(lessonIdx >= 0)) {
+                    lessonIdx = 0;
+                } else {
+                    lessonIdx = lessonIdx + 1;
+                }
+            }
+            setLesson({ ...listTopics[topicIdx]?.listLessons[lessonIdx], topicIdx: topicIdx, lessonIdx: lessonIdx });
+        }
+    }, [learn]);
 
     function secondsToHms(d, type) {
         d = Number(d);
@@ -106,23 +122,21 @@ const Learning = () => {
         } else if (type === 'ms') {
             return (m < 10 ? `0${m}` : m) + ':' + (s < 10 ? `0${s}` : s);
         } else {
-            return mDisplay + ' ' + sDisplay + '' + sDisplay;
+            return hDisplay + ' ' + mDisplay + ' ' + sDisplay;
         }
     }
-    const header = useRef();
-    const headerC = useRef();
-    const [headerH, setHeaderH] = useState(0);
-    useEffect(() => {
-        setHeaderH(header.current.clientHeight + headerC.current.clientHeight);
-    }, [header.current?.clientHeight, headerH.current?.clientHeight]);
-    const done = () => {
-        dispatch(courseActions.done({ userId: currentUser._id, courseId: course._id, lessonId: lesson._id }));
-        dispatch(courseActions.getLearning({ userId: currentUser._id, courseId: course._id }));
-    };
+
+    const endVideo = useCallback(() => {
+        let obj = learn?.listLessonId?.find((x) => x === lesson._id);
+        if (!obj) {
+            dispatch(courseActions.done({ userId: currentUser._id, courseId: course._id, lessonId: lesson._id }));
+            dispatch(courseActions.getLearning({ userId: currentUser._id, courseId: course._id }));
+        }
+    }, [currentUser, course, lesson]);
     return (
         <>
             <CRow xs={{ gutter: 0 }} className="box">
-                <CCol ref={header} className="nav-bar-lesson">
+                <CCol className="nav-bar-lesson">
                     <div>
                         <a href="/" style={{ textDecoration: 'none', color: '#fff' }}>
                             <CIcon icon={cilChevronLeft} />
@@ -137,13 +151,13 @@ const Learning = () => {
                                 }, 0) / lessonCount
                             }
                             maxValue={1}
-                            text={`${
+                            text={`${(
                                 (tCount.reduce((t, n) => {
                                     return t + n;
                                 }, 0) /
                                     lessonCount) *
                                 100
-                            }%`}
+                            ).toFixed(2)}%`}
                         />
                         <strong>
                             {tCount.reduce((t, n) => {
@@ -159,8 +173,8 @@ const Learning = () => {
                     lg="9"
                     xs="12"
                     style={{
-                        marginTop: `${header.current?.clientHeight}px`,
-                        height: `calc(100vh - ${header.current?.clientHeight}px )`,
+                        marginTop: `55px`,
+                        height: `calc(100vh - 55px )`,
                         overflowY: 'overlay',
                         borderRight: '1px solid #ccc',
                     }}
@@ -168,21 +182,11 @@ const Learning = () => {
                     <div className="box-player-doc" style={{ backgroundColor: ' #000' }}>
                         <div className="player-doc">
                             <div className="player">
-                                <ReactHlsPlayer
-                                    onEnded={(a) => {
-                                        debugger;
-                                        done();
-                                    }}
-                                    src={DOMAIN + lesson.url}
-                                    id={lesson?.name}
-                                    width="100%"
-                                    height="100%"
-                                    controls
-                                />
+                                <VideoPlayer lesson={lesson} endVideo={endVideo} />
                             </div>
                         </div>
                     </div>
-                    <div className="box-player-doc mt-4" style={{ minHeight: '500px' }}>
+                    <div className="box-player-doc mt-4">
                         <div style={{ width: '80%' }}>
                             <h4>
                                 <strong>{lesson?.name}</strong>
@@ -190,14 +194,15 @@ const Learning = () => {
                             <div className="mt-4">
                                 <span dangerouslySetInnerHTML={{ __html: lesson.description }}></span>
                             </div>
+                            <CommentBox currentUser={currentUser} course={course} socketRef={socketRef} get={get} />
                         </div>
                     </div>
                 </CCol>
-                <CCol className="box-controls" lg="3" style={{ marginTop: `${header.current?.clientHeight}px` }}>
-                    <div className="header" ref={headerC}>
-                        <h5>Nội dung khóa học</h5>
+                <CCol className="box-controls" lg="3" style={{ marginTop: `55px` }}>
+                    <div className="header">
+                        <h5 className="m-0">Nội dung khóa học</h5>
                     </div>
-                    <CAccordion activeItemKey={1} style={{ height: `calc(100vh - ${headerH}px )` }} alwaysOpen>
+                    <CAccordion activeItemKey={1} style={{ height: `calc(100vh - 119px )` }} alwaysOpen>
                         {listTopics.map((t, ti) => {
                             return (
                                 <CAccordionItem itemKey={ti + 1} key={ti}>
@@ -257,4 +262,97 @@ const Learning = () => {
     );
 };
 
+const CommentList = ({ comments }) => {
+    let _comment = comments.map((c) => {
+        return {
+            author: c.userId.fullName,
+            avatar: c.userId.avatar,
+            content: <p>{c.text}</p>,
+            datetime: TimeAgo(c.createdAt),
+        };
+    });
+    return (
+        <List dataSource={_comment} header={`${_comment.length} bình luận`} itemLayout="horizontal" renderItem={(props) => <Comment {...props} />} />
+    );
+};
+
+const CommentBox = ({ currentUser, course, socketRef, get }) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(commentActions.getComment({ courseId: course?._id }));
+    }, [dispatch, get, course]);
+    const comments = useSelector(commentSelector.comments);
+    return (
+        <>
+            {comments.length > 0 && <CommentList comments={comments} />}
+            <Comment
+                avatar={<Avatar src={currentUser.avatar} alt="Han Solo" />}
+                content={<Editor currentUser={currentUser} course={course} socketRef={socketRef} />}
+            />
+        </>
+    );
+};
+
+const Editor = ({ currentUser, course, socketRef }) => {
+    const [comment, setComment] = useState('');
+    const dispatch = useDispatch();
+
+    const handleSubmit = () => {
+        if (!comment) return;
+        let model = { userId: currentUser._id, courseId: course._id, text: comment };
+        dispatch(commentActions.saveComment(model));
+        socketRef.current.emit('sendMessage', { courseId: course._id });
+        setComment('');
+    };
+
+    const handleChangeComment = (e) => {
+        setComment(e.target.value);
+    };
+    return (
+        <>
+            <Form.Item>
+                <TextArea rows={4} onChange={handleChangeComment} value={comment} />
+            </Form.Item>
+            <Form.Item>
+                <Button htmlType="submit" onClick={handleSubmit} type="primary">
+                    Thêm bình luận
+                </Button>
+            </Form.Item>
+        </>
+    );
+};
 export default Learning;
+const TimeAgo = (value) => {
+    if (value) {
+        const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
+        if (seconds <= 60) return 'gần đây';
+
+        const intervals = {
+            year: 31536000,
+
+            month: 2592000,
+
+            week: 604800,
+
+            day: 86400,
+
+            hour: 3600,
+
+            minute: 60,
+
+            second: 1,
+        };
+        if (seconds > intervals.minute && seconds < intervals.hour) {
+            return Math.floor(seconds / intervals.minute) + ' phút trước';
+        }
+        if (seconds > intervals.hour && seconds < intervals.day) {
+            return Math.floor(seconds / intervals.hour) + ' giờ trước';
+        }
+        if (seconds > intervals.day && seconds < intervals.week) {
+            return Math.floor(seconds / intervals.day) + ' ngày trước';
+        } else {
+            return new Date(value).toLocaleString().split(',')[0];
+        }
+    }
+    return value;
+};

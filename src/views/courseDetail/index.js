@@ -13,13 +13,13 @@ import {
     CAccordionBody,
     CTable,
     CTableBody,
-    CHeaderNav,
     CTableRow,
     CTableDataCell,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilClock, cilBook, cilMovie } from '@coreui/icons';
 import AppHeader from '../../components/AppHeader';
+import AppFooter from '../../components/AppFooter';
 
 import './index.scss';
 const CourseDetail = () => {
@@ -76,7 +76,7 @@ const CourseDetail = () => {
         } else if (type === 'ms') {
             return (m < 10 ? `0${m}` : m) + ':' + (s < 10 ? `0${s}` : s);
         } else {
-            return mDisplay + ' ' + sDisplay + '' + sDisplay;
+            return hDisplay + ' ' + mDisplay + ' ' + sDisplay;
         }
     }
     const registerCourse = () => {
@@ -99,8 +99,7 @@ const CourseDetail = () => {
                     className="course-detail"
                     xs="12"
                     style={{
-                        marginTop: `64px`,
-                        height: `calc(100vh - 64px )`,
+                        height: `calc(100vh - 112px )`,
                         overflowY: 'overlay',
                         padding: '20px 50px 0',
                     }}
@@ -171,6 +170,7 @@ const CourseDetail = () => {
                         marginTop: `${header.current?.clientHeight}px`,
                         height: `calc(100vh - ${header.current?.clientHeight}px )`,
                         overflowY: 'overlay',
+                        overflowX: 'hidden',
                         padding: '20px 0  0',
                     }}
                 >

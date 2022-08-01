@@ -13,6 +13,9 @@ const authSlice = createSlice({
             state.currentUser = payload;
         },
         login(state) {},
+        register(state) {},
+        update(state) {},
+        forgotPassword(state) {},
         googleLogin(state) {},
         logout(state) {
             localStorage.removeItem('currentUser');

@@ -34,7 +34,7 @@ const Home = () => {
             <AppHeader />
             <CContainer className="mt-4">
                 <CRow>
-                    <h4 style={{ fontWeight: 'bold' }}>Lộ trình học Tiếng Nhật cơ bản</h4>
+                    <h4 style={{ fontWeight: 'bold' }}>Lộ trình học Tiếng Anh cơ bản</h4>
                     {courses1.map((c, i) => {
                         return (
                             <CCol lg="3" key={i}>
@@ -62,7 +62,7 @@ const Home = () => {
                     })}
                 </CRow>
                 <CRow>
-                    <h4 style={{ fontWeight: 'bold' }}>Lộ trình học Tiếng Nhật nâng cao</h4>
+                    <h4 style={{ fontWeight: 'bold' }}>Lộ trình học Tiếng Anh nâng cao</h4>
                     {courses2.map((c, i) => {
                         return (
                             <CCol lg="3" key={i}>

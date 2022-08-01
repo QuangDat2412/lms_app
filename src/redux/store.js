@@ -13,6 +13,8 @@ import topicReducer from './topic/topic.slice';
 import topicSaga from './topic/topic.saga';
 import lessonReducer from './lesson/lesson.slice';
 import lessonSaga from './lesson/lesson.saga';
+import commentReducer from './comment/comment.slice';
+import commentSaga from './comment/comment.saga';
 const rootReducer = combineReducers({
     auth: authReducer,
     others: othersSlice,
@@ -20,6 +22,7 @@ const rootReducer = combineReducers({
     users: userReducer,
     topics: topicReducer,
     lessons: lessonReducer,
+    comment: commentReducer,
 });
 const composeEnhancer =
     process.env.NODE_ENV !== 'production' && typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -29,7 +32,7 @@ const composeEnhancer =
         : compose;
 function* rootSaga() {
     try {
-        yield all([authSaga(), courseSaga(), userSaga(), otherSaga(), topicSaga(), lessonSaga()]);
+        yield all([authSaga(), courseSaga(), userSaga(), otherSaga(), topicSaga(), lessonSaga(), commentSaga()]);
     } catch (err) {
         // eslint-disable-next-line no-console
         console.trace(err);
