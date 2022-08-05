@@ -15,7 +15,7 @@ import socketIOClient from 'socket.io-client';
 import doneImg from '../../assets/done.png';
 import { DoubleLeftOutlined } from '@ant-design/icons';
 import { Progress } from 'antd';
-const host = 'http://localhost:2412';
+import { DOMAIN } from 'src/constants/api';
 const { TextArea } = Input;
 const { Title } = Typography;
 const { Header, Content } = Layout;
@@ -38,7 +38,7 @@ const Learning = () => {
         if (code) {
             dispatch(courseActions.getCourseByCode({ code: code }));
         }
-        socketRef.current = socketIOClient.connect(host);
+        socketRef.current = socketIOClient.connect(DOMAIN);
         socketRef.current.on('getMessage', (users) => {
             setGet((p) => p + 1);
         });
