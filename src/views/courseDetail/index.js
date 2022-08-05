@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
@@ -10,7 +10,6 @@ const { Title, Text } = Typography;
 const { Panel } = Collapse;
 
 const CourseDetail = () => {
-    const header = useRef();
     const [isRegister, setIsRegister] = useState(false);
     let navigate = useNavigate();
     const currentLocation = useLocation().pathname;

@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Modal, Button, Form, Col, Input, Row, Space, Layout } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useState, useEffect } from 'react';

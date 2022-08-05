@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +8,7 @@ import { OthersSelector } from 'src/redux/others/slice';
 import { Col, Row, Card, Typography } from 'antd';
 import { UsergroupDeleteOutlined } from '@ant-design/icons';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Meta } = Card;
 const Home = () => {
     let navigate = useNavigate();

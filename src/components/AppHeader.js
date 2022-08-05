@@ -3,11 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import logo from 'src/assets/logo.png';
 import { Layout, Menu, Dropdown, Avatar, Input, List, Typography, Space, Col, Row } from 'antd';
 import { authSelector, authActions } from 'src/redux/auth/auth.slice';
-import UploadImage from './uploadImage';
 import { UserOutlined, AntDesignOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
-const { Title } = Typography;
 const { Search } = Input;
 const { Header } = Layout;
 const MenuItem = () => {

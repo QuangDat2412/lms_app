@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Col, Row, List } from 'antd';
 import './index.scss';
 import { useDispatch, useSelector } from 'react-redux';

@@ -7,7 +7,6 @@ import clock from '../../assets/icon-lesson/Icon.svg';
 import './index.scss';
 import { Button, Col, Row, Space, Collapse, Layout, Typography, List, Input, Avatar, Comment, Form } from 'antd';
 import { commentActions, commentSelector } from 'src/redux/comment/comment.slice';
-import { CircularProgressbar } from 'react-circular-progressbar';
 import { useNavigate } from 'react-router-dom';
 import VideoPlayer from './video';
 import 'react-circular-progressbar/dist/styles.css';
@@ -18,7 +17,7 @@ import { DoubleLeftOutlined } from '@ant-design/icons';
 import { Progress } from 'antd';
 const host = 'http://localhost:2412';
 const { TextArea } = Input;
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Header, Content } = Layout;
 const { Panel } = Collapse;
 

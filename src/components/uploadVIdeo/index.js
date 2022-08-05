@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './index.scss';
 import { uploadImage } from 'src/apis/options';
-import { DOMAIN } from 'src/constants/api';
 import { Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
