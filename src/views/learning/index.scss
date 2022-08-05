@@ -1,80 +1,25 @@
-.box-controls {
-    .accordion-body {
-        padding: 0 !important;
-    }
-    .accordion {
-        overflow-y: auto;
-    }
-    .accordion-button {
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-    }
-    .accordion-button::after {
-        width: 0 !important;
-    }
-    .header {
-        padding-left: 20px;
-    }
-    .count {
-        display: flex;
-        margin: 0;
-        padding-left: 0;
-        list-style-type: none;
-        font-size: 14px;
-        .space {
-            margin-top: 1px;
-            opacity: 0.8;
-            padding: 0 8px;
-        }
-    }
-    .btn-lesson {
-        padding-left: 20px;
-        &:hover {
-            background-color: #f0ddbb !important;
-            cursor: pointer;
-        }
-    }
-    .active {
-        background-color: #f0ddbb !important;
-    }
+.active {
+    background-color: #f0ddbb !important;
 }
 .box-player-doc {
     display: flex;
     justify-content: center;
     width: 100%;
 }
-.nav-bar-lesson {
-    background-color: #29303b;
-    position: fixed;
-    z-index: 100;
-    width: 100%;
-    color: #fff !important;
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 40px 10px 20px;
-    & > div {
-        font-size: 18px;
-        font-weight: 700;
-        margin-left: 16px;
-        overflow: hidden;
-    }
-    svg {
-        width: 35px !important;
-        margin-right: 10px;
-    }
-    .CircularProgressbar-text {
-        font-size: 30px !important;
-    }
+
+.ant-progress-circle .ant-progress-text {
+    color: #fff;
 }
-.box {
-    height: 100vh;
-    overflow: hidden;
-}
-.box-iframe {
-    width: 100%;
-    height: 100%;
-    iframe {
-        width: 100%;
-        height: 100%;
+
+.custom-collapse {
+    .ant-collapse-content-box {
+        padding: 0 !important;
+        border-top: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .ant-list-item {
+        padding-right: 16px !important;
+        padding-left: 16px !important;
+        cursor: pointer;
     }
 }

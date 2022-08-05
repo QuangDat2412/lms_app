@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { CCol, CRow, CContainer, CCard, CCardText, CCardTitle, CCardBody } from '@coreui/react';
 import './index.scss';
-import { cilPeople } from '@coreui/icons';
-import CIcon from '@coreui/icons-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
-import AppHeader from '../../components/AppHeader';
-import AppFooter from '../../components/AppFooter';
 import { useNavigate } from 'react-router-dom';
 import { OthersSelector } from 'src/redux/others/slice';
+import { Col, Row, Card, Typography } from 'antd';
+import { UsergroupDeleteOutlined } from '@ant-design/icons';
 
+const { Title, Text } = Typography;
+const { Meta } = Card;
 const Home = () => {
     let navigate = useNavigate();
-    const filterForm = { name: '', status: 0 };
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(courseActions.getCourse(filterForm));
-    }, [dispatch]);
+        dispatch(courseActions.setFilter(filterForm));
+    }, []);
     const options = useSelector(OthersSelector.options);
     const courses = useSelector(courseSelector.courses);
+    const filterForm = useSelector(courseSelector.filterForm);
     const [courses1, setCourses1] = useState([]);
     const [courses2, setCourses2] = useState([]);
 
@@ -31,61 +30,80 @@ const Home = () => {
     }, [dispatch, courses, typeCourse]);
     return (
         <>
-            <AppHeader />
-            <CContainer className="mt-4">
-                <CRow>
-                    <h4 style={{ fontWeight: 'bold' }}>Lộ trình học Tiếng Anh cơ bản</h4>
+            <Card style={{ padding: '20px 70px 10px' }}>
+                <Row>
+                    <Title level={2}>
+                        <strong>Khóa học Tiếng Anh cơ bản</strong>
+                    </Title>
+                </Row>
+                <Row gutter={16}>
                     {courses1.map((c, i) => {
                         return (
-                            <CCol lg="3" key={i}>
-                                <CCard
-                                    style={{ width: '100%', border: 'none', cursor: 'pointer' }}
+                            <Col span={6} key={i}>
+                                <Card
                                     onClick={() => {
                                         navigate('/courses/' + c.code, { replace: true });
                                     }}
-                                >
-                                    <div className="cus-box-img thumbnail">
-                                        <div className="img">
-                                            <img src={c.image} alt="" />
+                                    hoverable
+                                    cover={
+                                        <div className="cus-box-img thumbnail">
+                                            <div className="img">
+                                                <img src={c.image} alt="" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <CCardBody>
-                                        <CCardTitle style={{ fontWeight: 'bold' }}>{c.name}</CCardTitle>
-                                        <CCardText>
-                                            <CIcon icon={cilPeople} className="me-2" />
-                                            {c.count}
-                                        </CCardText>
-                                    </CCardBody>
-                                </CCard>
-                            </CCol>
+                                    }
+                                >
+                                    <Meta
+                                        title={c.name}
+                                        description={
+                                            <div>
+                                                <UsergroupDeleteOutlined />
+                                                <span style={{ marginLeft: '5px' }}>{c.count}</span>
+                                            </div>
+                                        }
+                                    />
+                                </Card>
+                            </Col>
                         );
                     })}
-                </CRow>
-                <CRow>
-                    <h4 style={{ fontWeight: 'bold' }}>Lộ trình học Tiếng Anh nâng cao</h4>
+                </Row>
+                <Row style={{ marginTop: '20px' }}>
+                    <Title level={2}>
+                        <strong>Khóa học Tiếng Anh nâng cao</strong>
+                    </Title>
+                </Row>
+                <Row gutter={16}>
                     {courses2.map((c, i) => {
                         return (
-                            <CCol lg="3" key={i}>
-                                <CCard style={{ width: '100%', border: 'none' }}>
-                                    <div className="cus-box-img thumbnail">
-                                        <div className="img">
-                                            <img src={c.image} alt="" />
+                            <Col span={6} key={i}>
+                                <Card
+                                    onClick={() => {
+                                        navigate('/courses/' + c.code, { replace: true });
+                                    }}
+                                    hoverable
+                                    cover={
+                                        <div className="cus-box-img thumbnail">
+                                            <div className="img">
+                                                <img src={c.image} alt="" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <CCardBody>
-                                        <CCardTitle style={{ fontWeight: 'bold' }}>{c.name}</CCardTitle>
-                                        <CCardText>
-                                            <CIcon icon={cilPeople} className="me-2" />
-                                            {c.count}
-                                        </CCardText>
-                                    </CCardBody>
-                                </CCard>
-                            </CCol>
+                                    }
+                                >
+                                    <Meta
+                                        title={c.name}
+                                        description={
+                                            <div>
+                                                <UsergroupDeleteOutlined />
+                                                <span style={{ marginLeft: '5px' }}>{c.count}</span>
+                                            </div>
+                                        }
+                                    />
+                                </Card>
+                            </Col>
                         );
                     })}
-                </CRow>
-            </CContainer>
-            <AppFooter />
+                </Row>
+            </Card>
         </>
     );
 };

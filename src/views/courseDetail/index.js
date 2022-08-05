@@ -1,27 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AppHeaderDropdown } from '../../components/header';
 import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
 import { authSelector } from 'src/redux/auth/auth.slice';
-import {
-    CCol,
-    CRow,
-    CAccordion,
-    CAccordionItem,
-    CAccordionHeader,
-    CAccordionBody,
-    CTable,
-    CTableBody,
-    CTableRow,
-    CTableDataCell,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilClock, cilBook, cilMovie } from '@coreui/icons';
-import AppHeader from '../../components/AppHeader';
-import AppFooter from '../../components/AppFooter';
-
 import './index.scss';
+import { ApartmentOutlined } from '@ant-design/icons';
+import { Card, Button, Col, Row, Space, Collapse, Typography, List } from 'antd';
+const { Title, Text } = Typography;
+const { Panel } = Collapse;
+
 const CourseDetail = () => {
     const header = useRef();
     const [isRegister, setIsRegister] = useState(false);
@@ -39,7 +26,6 @@ const CourseDetail = () => {
         }
     }, [dispatch, code]);
     useEffect(() => {
-        debugger;
         dispatch(courseActions.getLearning({ userId: currentUser?._id, courseId: course?._id }));
     }, [dispatch, course, currentUser]);
     useEffect(() => {
@@ -92,136 +78,163 @@ const CourseDetail = () => {
     };
     return (
         <>
-            <CRow xs={{ gutter: 0 }} className="box">
-                <AppHeader />
-                <CCol
-                    lg="8"
-                    className="course-detail"
-                    xs="12"
+            <Row>
+                <Col
+                    span={18}
                     style={{
-                        height: `calc(100vh - 112px )`,
+                        height: `calc(100vh - 134px )`,
                         overflowY: 'overlay',
-                        padding: '20px 50px 0',
                     }}
                 >
-                    <CRow xs={{ gutterX: 2, gutterY: 2 }}>
-                        <CCol lg={12} className="mb-2">
-                            <h2>
-                                <strong>{course.name}</strong>
-                            </h2>
-                            <span dangerouslySetInnerHTML={{ __html: course.description }}></span>
-                        </CCol>
-                        <CCol lg={12} className="mb-1">
-                            <h4>
-                                <strong>Nội dung khóa học</strong>
-                                <ul className="count mt-3">
-                                    <li>
-                                        <strong>{course.listTopics?.length} </strong> chương
-                                    </li>
-                                    <li className="space">•</li>
-                                    <li>
-                                        <strong>{lessonCount} </strong> bài học
-                                    </li>
-                                    <li className="space">•</li>
-                                    <li>
-                                        <span>
-                                            Thời lượng: <strong>{secondsToHms(times)}</strong>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </h4>
-                        </CCol>
-                        <CCol lg={12}>
-                            <CAccordion activeItemKey={0} alwaysOpen>
-                                {listTopics.map((t, i) => {
-                                    return (
-                                        <CAccordionItem itemKey={i} key={i}>
-                                            <CAccordionHeader>
-                                                <strong style={{ fontSize: '16px', flex: 1 }}>{`${i + 1}. ${t.name}`}</strong>
-                                                <span style={{ fontSize: '16px', marginRight: '10px' }}>{t.listLessons.length + ' bài học'}</span>
-                                            </CAccordionHeader>
-                                            <CAccordionBody>
-                                                <CTable className="mb-0">
-                                                    <CTableBody>
-                                                        {t.listLessons.map((l, i) => {
-                                                            return (
-                                                                <CTableRow key={i}>
-                                                                    <CTableDataCell className="btn-lesson">{l.sort + '. ' + l.name}</CTableDataCell>
-                                                                    <CTableDataCell className="d-flex justify-content-end">
-                                                                        {secondsToHms(l.time, 'ms')}
-                                                                    </CTableDataCell>
-                                                                </CTableRow>
-                                                            );
-                                                        })}
-                                                    </CTableBody>
-                                                </CTable>
-                                            </CAccordionBody>
-                                        </CAccordionItem>
-                                    );
-                                })}
-                            </CAccordion>
-                        </CCol>
-                    </CRow>
-                </CCol>
-                <CCol
-                    lg="4"
-                    xs="12"
+                    <Card style={{ minHeight: '100%' }}>
+                        <Row gutter={16}>
+                            <Col span={24}>
+                                <Title>
+                                    <strong>{course.name}</strong>
+                                </Title>
+                                <Text>
+                                    <span dangerouslySetInnerHTML={{ __html: course.description }}></span>
+                                </Text>
+                            </Col>
+                            <Col span={24}>
+                                <Title level={3}>Nội dung khóa học</Title>
+                                <h3>
+                                    <ul className="count mt-3">
+                                        <li>
+                                            <strong>{course.listTopics?.length} </strong> chương
+                                        </li>
+                                        <li className="space">•</li>
+                                        <li>
+                                            <strong>{lessonCount} </strong> bài học
+                                        </li>
+                                        <li className="space">•</li>
+                                        <li>
+                                            <span>
+                                                Thời lượng: <strong>{secondsToHms(times)}</strong>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </h3>
+                            </Col>
+                            <Col span={24}>
+                                <Collapse collapsible="header" expandIconPosition={'end'} className="site-collapse-custom-collapse" bordered={false}>
+                                    {listTopics.map((t, i) => {
+                                        return (
+                                            <Panel
+                                                className="site-collapse-custom-panel"
+                                                header={
+                                                    <>
+                                                        <Space>
+                                                            <strong style={{ fontSize: '16px', flex: 1 }}>{`${i + 1}. ${t.name}`}</strong>
+                                                        </Space>
+                                                    </>
+                                                }
+                                                key={i}
+                                                extra={
+                                                    <span style={{ fontSize: '16px', marginRight: '10px' }}>{t.listLessons.length + ' bài học'}</span>
+                                                }
+                                            >
+                                                <List
+                                                    itemLayout="horizontal"
+                                                    dataSource={t.listLessons}
+                                                    renderItem={(item) => (
+                                                        <List.Item actions={[<p>{secondsToHms(item.time, 'ms')}</p>]}>
+                                                            {item.sort + '. ' + item.name}
+                                                        </List.Item>
+                                                    )}
+                                                />
+                                            </Panel>
+                                        );
+                                    })}
+                                </Collapse>
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
+                <Col
+                    span={6}
                     style={{
-                        marginTop: `${header.current?.clientHeight}px`,
-                        height: `calc(100vh - ${header.current?.clientHeight}px )`,
-                        overflowY: 'overlay',
-                        overflowX: 'hidden',
-                        padding: '20px 0  0',
+                        height: `calc(100vh - 134px )`,
                     }}
                 >
-                    <CRow>
-                        <CCol lg="12">
-                            <div style={{ padding: '0 50px' }}>
-                                <div className="player-doc">
-                                    <div className="player">
-                                        <img width="100%" height="100%" src={course.image} alt="" />
+                    <Card style={{ height: '100%' }}>
+                        <Row gutter={[0, 16]}>
+                            <Col span={24}>
+                                <div style={{ padding: '0 50px', marginTop: '50px' }}>
+                                    <div className="player-doc">
+                                        <div className="player">
+                                            <img width="100%" height="100%" src={course.image} alt="" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </CCol>
-                        <CCol lg="12" className="d-flex justify-content-center mt-3">
-                            <h2 style={{ color: 'orange' }}>Miễn Phí</h2>
-                        </CCol>
-                        <CCol lg="12" className="d-flex justify-content-center mt-3">
-                            {isRegister ? (
-                                <div className="px-4 py-2 btn-action" onClick={goLearning}>
-                                    Học tiếp
-                                </div>
-                            ) : (
-                                <div className="px-4 py-2 btn-action" onClick={registerCourse}>
-                                    Đăng ký
-                                </div>
-                            )}
-                        </CCol>
-                        <CCol lg="12" className="mt-2">
-                            <CRow className="align-items-center">
-                                <CCol lg="3"></CCol>
-                                <CCol lg="1">
-                                    <CIcon icon={cilBook} />
-                                </CCol>
-                                <CCol lg="8">{course.type?.name}</CCol>
-                                <CCol lg="3"></CCol>
+                            </Col>
+                            <Col span={24}>
+                                <Space
+                                    size="large"
+                                    direction="horizontal"
+                                    style={{ width: '100%', justifyContent: 'center', flexDirection: 'column' }}
+                                >
+                                    <Title type="danger" style={{ margin: 0 }}>
+                                        <strong>Miễn Phí</strong>
+                                    </Title>
 
-                                <CCol lg="1">
-                                    <CIcon icon={cilMovie} />
-                                </CCol>
-                                <CCol lg="8">{'Tổng số ' + lessonCount + ' bài học'}</CCol>
-                                <CCol lg="3"></CCol>
-
-                                <CCol lg="1">
-                                    <CIcon icon={cilClock} />
-                                </CCol>
-                                <CCol lg="8">{'Thời lượng ' + secondsToHms(times)}</CCol>
-                            </CRow>
-                        </CCol>
-                    </CRow>
-                </CCol>
-            </CRow>
+                                    {isRegister ? (
+                                        <Button
+                                            onClick={goLearning}
+                                            style={{
+                                                backgroundColor: 'orange',
+                                                borderRadius: '16px',
+                                                borderColor: 'orange',
+                                                height: 'auto',
+                                                padding: '8px 26px',
+                                            }}
+                                            type="primary"
+                                        >
+                                            <Title style={{ margin: 0, color: '#fff' }} level={3}>
+                                                HỌC NGAY
+                                            </Title>
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={registerCourse}
+                                            style={{
+                                                backgroundColor: 'orange',
+                                                borderRadius: '16px',
+                                                borderColor: 'orange',
+                                                height: 'auto',
+                                                padding: '8px 26px',
+                                            }}
+                                            type="primary"
+                                        >
+                                            <Title style={{ margin: 0, color: '#fff' }} level={3}>
+                                                Đăng ký
+                                            </Title>
+                                        </Button>
+                                    )}
+                                    <List>
+                                        <List.Item>
+                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            {course.type?.name}
+                                        </List.Item>
+                                        <List.Item>
+                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            {'Tổng số ' + lessonCount + ' bài học'}
+                                        </List.Item>
+                                        <List.Item>
+                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            {'Thời lượng ' + secondsToHms(times)}
+                                        </List.Item>
+                                        <List.Item>
+                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            Học mọi lúc, mọi nơi
+                                        </List.Item>
+                                    </List>
+                                </Space>
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
+            </Row>
         </>
     );
 };

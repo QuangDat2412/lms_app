@@ -1,207 +1,183 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-    CContainer,
-    CHeader,
-    CHeaderBrand,
-    CHeaderDivider,
-    CHeaderNav,
-    CHeaderToggler,
-    CNavLink,
-    CNavItem,
-    CDropdown,
-    CDropdownToggle,
-    CDropdownMenu,
-    CInputGroup,
-    CInputGroupText,
-    CFormInput,
-    CPopover,
-    CTable,
-    CTableBody,
-    CTableRow,
-    CTableDataCell,
-    CDropdownHeader,
-    CDropdownDivider,
-    CAvatar,
-    CRow,
-    CCol,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilBell, cilSearch } from '@coreui/icons';
-import { AppHeaderDropdown } from './header/index';
 import logo from 'src/assets/logo.png';
-import da from 'src/assets/default-avatar.png';
-import { courseActions, courseSelector } from 'src/redux/course/course.slice';
-import { authSelector } from 'src/redux/auth/auth.slice';
+import { Layout, Menu, Dropdown, Avatar, Input, List, Typography, Space, Col, Row } from 'antd';
+import { authSelector, authActions } from 'src/redux/auth/auth.slice';
+import UploadImage from './uploadImage';
+import { UserOutlined, AntDesignOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-
-// eslint-disable-next-line react/prop-types
-const AppHeader = () => {
-    let navigate = useNavigate();
-    const filterForm = { name: '', status: 0 };
-    const [filter, setFilter] = useState(filterForm);
+import { courseActions, courseSelector } from 'src/redux/course/course.slice';
+const { Title } = Typography;
+const { Search } = Input;
+const { Header } = Layout;
+const MenuItem = () => {
     const currentUser = useSelector(authSelector.currentUser);
     const dispatch = useDispatch();
+    const logout = (e) => {
+        e.preventDefault();
+        dispatch(authActions.logout());
+    };
+    return (
+        <Menu
+            style={{ width: '160px' }}
+            items={[
+                {
+                    key: '1',
+                    label: <span>{currentUser.fullName}</span>,
+                },
+                {
+                    key: '2',
+                    label: <a href="/profile">Trang cá nhân</a>,
+                },
+                {
+                    key: '3',
+                    label: (
+                        <a
+                            href="/"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                dispatch(authActions.handleVisibleModal(true));
+                            }}
+                        >
+                            Chỉnh sửa thông tin
+                        </a>
+                    ),
+                },
+                {
+                    key: '4',
+                    label: (
+                        <a
+                            href="/"
+                            onClick={(e) => {
+                                logout(e);
+                            }}
+                        >
+                            Đăng xuất
+                        </a>
+                    ),
+                },
+            ]}
+        />
+    );
+};
+
+const AppHeader = () => {
+    const currentUser = useSelector(authSelector.currentUser);
+    let navigate = useNavigate();
+    const courses = useSelector(courseSelector.sCourses);
+    const dispatch = useDispatch();
+    const [search, setSearch] = useState('');
     useEffect(() => {
-        dispatch(courseActions.searchCourse(filter));
-    }, [dispatch, filter]);
+        dispatch(courseActions.searchCourse({ name: search }));
+    }, [dispatch, search]);
     useEffect(() => {
         dispatch(courseActions.getLearningByUserId(currentUser));
     }, [dispatch, currentUser]);
-    const courses = useSelector(courseSelector.sCourses);
     const listLearn = useSelector(courseSelector.listLearn);
+
     return (
-        <CHeader position="sticky" style={{ color: '#fff !important' }}>
-            <CContainer fluid>
-                <CHeaderBrand
-                    to="/"
-                    onClick={() => {
-                        navigate('/', { replace: true });
-                    }}
-                >
-                    <img src={logo} height={48} alt="Logo" style={{ cursor: 'pointer' }} />
-                </CHeaderBrand>
-                <CHeaderNav className="d-none d-md-flex me-auto"></CHeaderNav>
-                <CHeaderNav className="d-none d-md-flex me-auto">
-                    <CPopover
-                        content={<RenderItem data={courses} />}
-                        placement="bottom"
-                        trigger="focus"
-                        onHide={() => {
-                            setFilter({ name: '' });
-                        }}
-                    >
-                        <CInputGroup className="custom-search">
-                            <CInputGroupText id="basic-addon1">
-                                <CIcon icon={cilSearch} height={20} alt="Logo" />
-                            </CInputGroupText>
-                            <CFormInput
-                                placeholder="Tìm kiếm khóa học"
-                                aria-label="Tìm kiếm khóa học"
-                                aria-describedby="basic-addon1"
-                                value={filter.name}
-                                onChange={(e) => {
-                                    setFilter({ name: e.target.value });
-                                }}
-                            />
-                        </CInputGroup>
-                    </CPopover>
-                </CHeaderNav>
-                <CHeaderNav className="ms-3">
-                    <CDropdown variant="nav-item">
-                        <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
-                            <h6 className="m-0" style={{ fontWeight: 'bold' }}>
-                                Khóa học của tôi
-                            </h6>
-                        </CDropdownToggle>
-                        <CDropdownMenu className="pt-0 custom-dropdown-menu" placement="bottom-end">
-                            <CDropdownHeader className="fw-semibold py-2">
-                                <span className="m-0" style={{ fontWeight: 'bold' }}>
-                                    Khóa học của tôi
-                                </span>
-                            </CDropdownHeader>
-                            <hr className="m-0" />
-                            <CTable className="mb-0">
-                                <CTableBody>
-                                    {listLearn.length > 0 ? (
-                                        listLearn.map((l, li) => {
-                                            return (
-                                                <CTableRow
-                                                    key={li}
-                                                    onClick={() => {
-                                                        navigate('/courses/' + l.courseId.code, { replace: true });
-                                                    }}
-                                                >
-                                                    <CTableDataCell className="btn-lesson px-4 cus-td">
-                                                        <CRow>
-                                                            <CCol lg="4">
-                                                                <div className="cus-box-img thumbnail" style={{ borderRadius: '8px' }}>
-                                                                    <div className="img">
-                                                                        <img src={l.courseId.image} alt="" />
-                                                                    </div>
-                                                                </div>
-                                                            </CCol>
-                                                            <CCol lg="8" className="d-flex align-items-center">
-                                                                <span style={{ fontWeight: '500' }}>{l.courseId.name}</span>
-                                                            </CCol>
-                                                        </CRow>
-                                                    </CTableDataCell>
-                                                </CTableRow>
-                                            );
-                                        })
-                                    ) : (
-                                        <CTableRow>
-                                            <CTableDataCell className="btn-lesson cus-td">Bạn chưa đăng ký khóa học nào.</CTableDataCell>
-                                        </CTableRow>
-                                    )}
-                                </CTableBody>
-                            </CTable>
-                        </CDropdownMenu>
-                    </CDropdown>
-                </CHeaderNav>
-                <CHeaderNav className="ms-3">
-                    {currentUser?._id ? (
-                        <AppHeaderDropdown />
-                    ) : (
-                        <div
-                            style={{ width: '40px' }}
-                            onClick={() => {
-                                navigate('/login', { replace: true });
+        <>
+            <Header className="header" style={{ backgroundColor: '#f2ce5f' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
+                    <a href="/" style={{ textDecoration: 'none', color: '#fff', display: 'inline-flex', alignItems: 'center' }}>
+                        <img src={logo} height={40} alt="Logo" style={{ cursor: 'pointer' }} />
+                    </a>
+                    <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <Dropdown
+                            overlay={<RenderItem data={courses} />}
+                            placement="bottom"
+                            onVisibleChange={(e) => {
+                                if (!e) setSearch('');
                             }}
                         >
-                            <div className="box-img avatar" style={{ borderRadius: '8px' }}>
-                                <div className="img">
-                                    <img src={da} alt="" />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </CHeaderNav>
-            </CContainer>
-        </CHeader>
+                            <Search
+                                placeholder="Tìm kiếm khóa học"
+                                value={search}
+                                onChange={(e) => {
+                                    setSearch(e.target.value);
+                                }}
+                                style={{ borderRadius: '20px', overflow: 'hidden', width: '300px' }}
+                            />
+                        </Dropdown>
+                    </div>
+                    <Space align="center" style={{ cursor: 'pointer' }}>
+                        {currentUser._id ? (
+                            <>
+                                <Dropdown
+                                    overlay={
+                                        <List
+                                            header={<Typography.Title level={5}>Khóa học của tôi</Typography.Title>}
+                                            bordered
+                                            style={{ backgroundColor: '#fff', width: '400px' }}
+                                            dataSource={listLearn}
+                                            renderItem={(l) => (
+                                                <List.Item key={l.title}>
+                                                    <Row style={{ width: '100%' }} gutter={8}>
+                                                        <Col span={14}>
+                                                            <div className="player-doc">
+                                                                <div className="player">
+                                                                    <img width="100%" height="100%" src={l.courseId.image} alt="" />
+                                                                </div>
+                                                            </div>
+                                                        </Col>
+                                                        <Col span={10}>
+                                                            <Typography.Title level={5}>
+                                                                <a href={'/courses/' + l.courseId.code}>{l.courseId.name}</a>
+                                                            </Typography.Title>
+                                                        </Col>
+                                                    </Row>
+                                                </List.Item>
+                                            )}
+                                        />
+                                    }
+                                    placement="bottomRight"
+                                >
+                                    <Typography.Title level={5}>Khóa học của tôi</Typography.Title>
+                                </Dropdown>
+                                <Dropdown overlay={<MenuItem />} placement="bottomRight">
+                                    <Avatar size={40} icon={<UserOutlined />} src={currentUser?.avatar} />
+                                </Dropdown>
+                            </>
+                        ) : (
+                            <Avatar
+                                size={40}
+                                icon={<UserOutlined />}
+                                onClick={() => {
+                                    navigate('/login', { replace: true });
+                                }}
+                            />
+                        )}
+                    </Space>
+                </div>
+            </Header>
+        </>
     );
 };
-// eslint-disable-next-line react/prop-types
+
 const RenderItem = ({ data }) => {
     let navigate = useNavigate();
     let datas = data || [];
     return (
-        <CTable className="mb-0">
-            <CTableBody>
-                <CTableRow>
-                    <CTableDataCell className="btn-lesson px-2 cus-td">
-                        <span style={{ fontWeight: '500' }}>Kết quả tìm kiếm: </span>
-                    </CTableDataCell>
-                </CTableRow>
-                <hr className="m-0" />
-                {datas.length > 0 ? (
-                    datas.map((l, li) => {
-                        return (
-                            <CTableRow
-                                key={li}
-                                onClick={() => {
-                                    navigate('/courses/' + l.code, { replace: true });
-                                }}
-                            >
-                                <CTableDataCell className="btn-lesson px-2 fix-img cus-td">
-                                    <CAvatar src={l?.image} size="md" />{' '}
-                                    <span className="ms-2" style={{ fontWeight: 'bold' }}>
-                                        {l.name}
-                                    </span>
-                                </CTableDataCell>
-                            </CTableRow>
-                        );
-                    })
-                ) : (
-                    <CTableRow>
-                        <CTableDataCell className="btn-lesson px-2 py-4 d-flex justify-content-center cus-td">
-                            <span style={{ fontWeight: '400', display: 'block' }}>Không tìm thấy khóa học.</span>
-                        </CTableDataCell>
-                    </CTableRow>
-                )}
-            </CTableBody>
-        </CTable>
+        <List
+            header={<Typography.Title level={5}>Kết quả tìm kiếm</Typography.Title>}
+            bordered
+            style={{ backgroundColor: '#fff', width: '400px' }}
+            dataSource={datas}
+            renderItem={(l, li) => (
+                <List.Item
+                    onClick={() => {
+                        navigate('/courses/' + l.code, { replace: true });
+                    }}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <List.Item.Meta
+                        avatar={<Avatar size={30} src={l?.image} icon={<AntDesignOutlined />} />}
+                        title={<a href={'/courses/' + l.code}>{l.name}</a>}
+                    />
+                </List.Item>
+            )}
+        />
     );
 };
+
 export default AppHeader;

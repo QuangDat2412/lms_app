@@ -4,8 +4,8 @@ import './index.scss';
 import avatar from 'src/assets/default-avatar.png';
 import thumbnail from 'src/assets/default.png';
 import { uploadImage } from 'src/apis/options';
-import CIcon from '@coreui/icons-react';
-import { cilPlus } from '@coreui/icons';
+import { PlusOutlined } from '@ant-design/icons';
+
 import { DOMAIN } from 'src/constants/api';
 
 const UploadImage = ({ setUrl, type, url }) => {
@@ -44,7 +44,7 @@ const UploadImage = ({ setUrl, type, url }) => {
                 <div className="caption" onClick={_uploadImage}>
                     <div className="file-input-wrapper">
                         <div className="btn-file-input">
-                            <CIcon icon={cilPlus} />
+                            <PlusOutlined />
                         </div>
                     </div>
                 </div>

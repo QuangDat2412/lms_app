@@ -1,35 +1,26 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-    CCol,
-    CRow,
-    CAccordionItem,
-    CAccordionHeader,
-    CTable,
-    CAccordion,
-    CAccordionBody,
-    CTableBody,
-    CTableRow,
-    CTableDataCell,
-} from '@coreui/react';
-import { Avatar, Button, Comment, Form, Input, List } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
-import { commentActions, commentSelector } from 'src/redux/comment/comment.slice';
 import { useLocation } from 'react-router-dom';
 import clock from '../../assets/icon-lesson/Icon.svg';
-import doneImg from '../../assets/done.png';
 import './index.scss';
-import { useNavigate } from 'react-router-dom';
+import { Button, Col, Row, Space, Collapse, Layout, Typography, List, Input, Avatar, Comment, Form } from 'antd';
+import { commentActions, commentSelector } from 'src/redux/comment/comment.slice';
 import { CircularProgressbar } from 'react-circular-progressbar';
+import { useNavigate } from 'react-router-dom';
+import VideoPlayer from './video';
 import 'react-circular-progressbar/dist/styles.css';
 import { authSelector } from 'src/redux/auth/auth.slice';
-import VideoPlayer from './video';
-import CIcon from '@coreui/icons-react';
-import { cilChevronLeft } from '@coreui/icons';
 import socketIOClient from 'socket.io-client';
+import doneImg from '../../assets/done.png';
+import { DoubleLeftOutlined } from '@ant-design/icons';
+import { Progress } from 'antd';
 const host = 'http://localhost:2412';
 const { TextArea } = Input;
+const { Title, Text } = Typography;
+const { Header, Content } = Layout;
+const { Panel } = Collapse;
 
 const Learning = () => {
     const currentLocation = useLocation().pathname;
@@ -135,135 +126,134 @@ const Learning = () => {
     }, [currentUser, course, lesson]);
     return (
         <>
-            <CRow xs={{ gutter: 0 }} className="box">
-                <CCol className="nav-bar-lesson">
-                    <div>
-                        <a href="/" style={{ textDecoration: 'none', color: '#fff' }}>
-                            <CIcon icon={cilChevronLeft} />
+            <Layout style={{ height: '100vh' }}>
+                <Header className="header">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
+                        <a href="/" style={{ textDecoration: 'none', color: '#fff', display: 'inline-flex', alignItems: 'center' }}>
+                            <DoubleLeftOutlined />
+                            <Title level={3} style={{ margin: '0 0 0 10px', color: '#fff' }}>
+                                {course.name}
+                            </Title>
                         </a>
-                        {course?.name}
-                    </div>
-                    <span>
-                        <CircularProgressbar
-                            value={
-                                tCount.reduce((t, n) => {
+                        <div style={{ width: '40px' }}>
+                            <Progress
+                                type="circle"
+                                percent={(
+                                    (tCount.reduce((t, n) => {
+                                        return t + n;
+                                    }, 0) *
+                                        100) /
+                                    lessonCount
+                                ).toFixed(0)}
+                                status="active"
+                                width={45}
+                            />
+
+                            <strong>
+                                {tCount.reduce((t, n) => {
                                     return t + n;
-                                }, 0) / lessonCount
-                            }
-                            maxValue={1}
-                            text={`${(
-                                (tCount.reduce((t, n) => {
-                                    return t + n;
-                                }, 0) /
-                                    lessonCount) *
-                                100
-                            ).toFixed(2)}%`}
-                        />
-                        <strong>
-                            {tCount.reduce((t, n) => {
-                                return t + n;
-                            }, 0) +
-                                '/' +
-                                lessonCount}
-                        </strong>
-                        {' bài học'}
-                    </span>
-                </CCol>
-                <CCol
-                    lg="9"
-                    xs="12"
-                    style={{
-                        marginTop: `55px`,
-                        height: `calc(100vh - 55px )`,
-                        overflowY: 'overlay',
-                        borderRight: '1px solid #ccc',
-                    }}
-                >
-                    <div className="box-player-doc" style={{ backgroundColor: ' #000' }}>
-                        <div className="player-doc">
-                            <div className="player">
-                                <VideoPlayer lesson={lesson} endVideo={endVideo} />
-                            </div>
+                                }, 0) +
+                                    '/' +
+                                    lessonCount}
+                            </strong>
+                            {' bài học'}
                         </div>
                     </div>
-                    <div className="box-player-doc mt-4">
-                        <div style={{ width: '80%' }}>
-                            <h4>
-                                <strong>{lesson?.name}</strong>
-                            </h4>
-                            <div className="mt-4">
-                                <span dangerouslySetInnerHTML={{ __html: lesson.description }}></span>
-                            </div>
-                            <CommentBox currentUser={currentUser} course={course} socketRef={socketRef} get={get} />
-                        </div>
-                    </div>
-                </CCol>
-                <CCol className="box-controls" lg="3" style={{ marginTop: `55px` }}>
-                    <div className="header">
-                        <h5 className="m-0">Nội dung khóa học</h5>
-                    </div>
-                    <CAccordion activeItemKey={1} style={{ height: `calc(100vh - 119px )` }} alwaysOpen>
-                        {listTopics.map((t, ti) => {
-                            return (
-                                <CAccordionItem itemKey={ti + 1} key={ti}>
-                                    <CAccordionHeader>
-                                        <div className="d-flex flex-column">
-                                            <strong style={{ fontSize: '16px', flex: 1 }}>{`${ti + 1}. ${t.name}`}</strong>
-                                            <span style={{ fontSize: '16px', marginRight: '10px' }}>{`${tCount[ti] || 0}/${
-                                                t.listLessons.length
-                                            }`}</span>
+                </Header>
+                <Layout style={{ background: '#fff' }}>
+                    <Content>
+                        <Row>
+                            <Col
+                                span={18}
+                                style={{
+                                    height: `calc(100vh - 64px )`,
+                                    overflowY: 'overlay',
+                                    borderRight: '1px solid #ccc',
+                                }}
+                            >
+                                <div className="box-player-doc" style={{ backgroundColor: ' #000' }}>
+                                    <div className="player-doc">
+                                        <div className="player">
+                                            <VideoPlayer lesson={lesson} endVideo={endVideo} />
                                         </div>
-                                    </CAccordionHeader>
-                                    <CAccordionBody>
-                                        <CTable className="mb-0">
-                                            <CTableBody>
-                                                {t?.listLessons.map((l, li) => {
-                                                    return (
-                                                        <CTableRow key={li}>
-                                                            <CTableDataCell
-                                                                className={
-                                                                    'btn-lesson ' +
-                                                                    (lesson.topicIdx === ti && lesson.lessonIdx === li ? 'active' : '')
-                                                                }
-                                                                onClick={() => {
-                                                                    setLesson({ ...l, topicIdx: ti, lessonIdx: li });
-                                                                }}
-                                                                style={{ position: 'relative' }}
-                                                            >
-                                                                <span>{l.sort + '. ' + l.name}</span>
-                                                                <div>
-                                                                    <small className="d-flex align-items-center">
-                                                                        <img src={clock} alt="clock" className="me-2" />
-                                                                        {secondsToHms(l.time, 'ms')}
-                                                                    </small>
+                                    </div>
+                                </div>
+                                <div className="box-player-doc mt-4">
+                                    <div style={{ width: '80%' }}>
+                                        <Title level={2}>
+                                            <strong>{lesson?.name}</strong>
+                                        </Title>
+
+                                        <div className="mt-4">
+                                            <span dangerouslySetInnerHTML={{ __html: lesson.description }}></span>
+                                        </div>
+                                        <CommentBox currentUser={currentUser} course={course} socketRef={socketRef} get={get} />
+                                    </div>
+                                </div>
+                            </Col>
+                            <Col
+                                span={6}
+                                style={{
+                                    height: `calc(100vh - 64px )`,
+                                    overflowY: 'overlay',
+                                }}
+                            >
+                                <Collapse collapsible="header" expandIconPosition={'end'} bordered={false} className="custom-collapse">
+                                    {listTopics.map((t, topicIdx) => {
+                                        return (
+                                            <Panel
+                                                header={
+                                                    <>
+                                                        <Space>
+                                                            <strong style={{ fontSize: '16px', flex: 1 }}>{`${topicIdx + 1}. ${t.name}`}</strong>
+                                                            <span style={{ fontSize: '16px', marginRight: '10px' }}>
+                                                                {`${tCount[topicIdx] || 0}/${t.listLessons.length}`}
+                                                            </span>
+                                                        </Space>
+                                                    </>
+                                                }
+                                                key={topicIdx}
+                                            >
+                                                <List
+                                                    itemLayout="horizontal"
+                                                    dataSource={t.listLessons}
+                                                    renderItem={(item, lessonIdx) => (
+                                                        <List.Item
+                                                            actions={[
+                                                                learn?.listLessonId?.find((x) => x === item._id) && <img src={doneImg} alt="done" />,
+                                                            ]}
+                                                            className={lesson.topicIdx === topicIdx && lesson.lessonIdx === lessonIdx ? 'active' : ''}
+                                                            onClick={() => {
+                                                                setLesson({ ...item, topicIdx: topicIdx, lessonIdx: lessonIdx });
+                                                            }}
+                                                        >
+                                                            <div>
+                                                                <span>{item.sort + '. ' + item.name}</span>
+                                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                                    <p style={{ margin: '0 10px 0 0' }}>{secondsToHms(item.time, 'ms')}</p>
+                                                                    <img src={clock} alt="clock" className="me-2" />
                                                                 </div>
-                                                                {learn?.listLessonId?.find((x) => x === l._id) && (
-                                                                    <img
-                                                                        src={doneImg}
-                                                                        alt="done"
-                                                                        className="me-2"
-                                                                        style={{ position: 'absolute', right: '10px', top: '50%' }}
-                                                                    />
-                                                                )}
-                                                            </CTableDataCell>
-                                                        </CTableRow>
-                                                    );
-                                                })}
-                                            </CTableBody>
-                                        </CTable>
-                                    </CAccordionBody>
-                                </CAccordionItem>
-                            );
-                        })}
-                    </CAccordion>
-                </CCol>
-            </CRow>
+                                                            </div>
+                                                        </List.Item>
+                                                    )}
+                                                />
+                                            </Panel>
+                                        );
+                                    })}
+                                </Collapse>
+                            </Col>
+                        </Row>
+                    </Content>
+                </Layout>
+            </Layout>
         </>
     );
 };
 
 const CommentList = ({ comments }) => {
-    let _comment = comments.map((c) => {
+    let listComment = [...comments];
+    listComment.reverse();
+    let _comment = listComment.map((c) => {
         return {
             author: c.userId.fullName,
             avatar: c.userId.avatar,
@@ -284,11 +274,11 @@ const CommentBox = ({ currentUser, course, socketRef, get }) => {
     const comments = useSelector(commentSelector.comments);
     return (
         <>
-            {comments.length > 0 && <CommentList comments={comments} />}
             <Comment
                 avatar={<Avatar src={currentUser.avatar} alt="Han Solo" />}
                 content={<Editor currentUser={currentUser} course={course} socketRef={socketRef} />}
             />
+            {comments.length > 0 && <CommentList comments={comments} />}
         </>
     );
 };

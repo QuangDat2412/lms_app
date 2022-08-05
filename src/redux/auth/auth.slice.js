@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     currentUser: JSON.parse(localStorage.getItem('currentUser')),
-    isLogin: false,
+    loading: false,
+    openModal: false,
 };
 
 const authSlice = createSlice({
@@ -10,30 +11,32 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         loginSuccess(state, { payload }) {
+            state.loading = false;
             state.currentUser = payload;
         },
         login(state) {},
         register(state) {},
-        update(state) {},
+        update(state) {
+            state.loading = true;
+        },
         forgotPassword(state) {},
         googleLogin(state) {},
         logout(state) {
             localStorage.removeItem('currentUser');
             state.currentUser = {};
         },
+        handleVisibleModal(state, { payload }) {
+            state.openModal = payload;
+        },
     },
 });
 
-// actions
 export const authActions = authSlice.actions;
-
-// selector
-
 export const authSelector = {
     currentUser: (state) => state['auth'].currentUser,
-    isLogin: (state) => state['auth'].isLogin,
+    openModal: (state) => state['auth'].openModal,
+    loading: (state) => state['auth'].loading,
 };
-// reducer
 const authReducer = authSlice.reducer;
 
 export default authReducer;

@@ -1,34 +1,37 @@
-import { call, put, takeEvery, debounce } from 'redux-saga/effects';
+import { call, put, takeEvery, debounce, select } from 'redux-saga/effects';
 import { getAll, saveUser } from 'src/apis/user';
 import { userActions } from './user.slice';
-import { callLoading } from '../others/saga';
-function* getUser({ payload }) {
+import { OthersAction } from '../others/slice';
+
+function* getUser() {
     function* doRQ() {
         try {
-            const res = yield call(getAll, payload);
+            const filterForm = yield select((state) => state.users.filterForm);
+            const res = yield call(getAll, filterForm);
             const { data } = res;
             yield put(userActions.getUserSuccess(data));
-        } catch (error) {}
+        } catch (error) {
+            yield put(OthersAction.showToasrt({ type: 'error', message: 'Lấy dữ liệu không thành công' }));
+            yield put(userActions.getUserFailure());
+        }
     }
-    yield callLoading(doRQ);
+    yield call(doRQ);
 }
 function* addUser({ payload }) {
-    const { inputs, type } = payload;
     function* doRQ() {
         try {
-            const res = yield call(saveUser, inputs);
-            const { data } = res;
-            if (type === 'add') {
-                yield put(userActions.saveUserSuccess(data));
-            } else {
-                yield put(userActions.updateUserSuccess(data));
-            }
-        } catch (error) {}
+            yield call(saveUser, payload);
+            yield put(OthersAction.showToasrt({ type: 'success', message: 'Lưu dữ liệu thành công' }));
+        } catch (error) {
+            yield put(OthersAction.showToasrt({ type: 'error', message: 'Lưu dữ liệu không thành công' }));
+        }
+        yield call(getUser, {});
+        yield put(userActions.handleVisibleModal(false));
     }
-    yield callLoading(doRQ);
+    yield call(doRQ);
 }
 function* userSaga() {
-    yield debounce(300, userActions.getUser.type, getUser);
+    yield debounce(300, userActions.setFilter.type, getUser);
     yield takeEvery(userActions.saveUser.type, addUser);
 }
 export default userSaga;
