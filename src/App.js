@@ -1,15 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, Suspense } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { notification, Spin } from 'antd';
 import { useSelector } from 'react-redux';
-import { OthersSelector } from 'src/redux/others/slice';
+import { OthersSelector, OthersAction } from 'src/redux/others/slice';
 import routes from './routes';
+import { useDispatch } from 'react-redux';
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'));
 const Learning = React.lazy(() => import('./views/learning'));
 
 const App = () => {
+    const dispatch = useDispatch();
     const toasrt = useSelector(OthersSelector.toasrt);
     useEffect(() => {
         if (toasrt.type)
@@ -17,7 +20,9 @@ const App = () => {
                 description: toasrt.message,
             });
     }, [toasrt]);
-
+    useEffect(() => {
+        dispatch(OthersAction.getOptions());
+    }, []);
     return (
         <BrowserRouter>
             <Suspense fallback={<Spin />}>

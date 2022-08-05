@@ -17,9 +17,7 @@ const Login = () => {
     const currentUser = useSelector(authSelector.currentUser);
     const dispatch = useDispatch();
     const responseSuccessGoogle = (res) => {
-        Promise.resolve(dispatch(authActions.googleLogin({ tokenId: res.tokenId }))).then(() => {
-            dispatch(OthersAction.getOptions());
-        });
+        dispatch(authActions.googleLogin({ tokenId: res.tokenId }));
     };
     const _sendOtp = (model) => {
         sendOtp(model)
@@ -36,9 +34,7 @@ const Login = () => {
         }
     }, [currentUser, navigate]);
     const handleSubmit = (values) => {
-        Promise.resolve(dispatch(authActions.login(values))).then((res) => {
-            dispatch(OthersAction.getOptions());
-        });
+        dispatch(authActions.login(values));
     };
     const handleRegister = (value) => {
         Promise.resolve(dispatch(authActions.register(value))).then((res) => {
