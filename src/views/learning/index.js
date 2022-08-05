@@ -49,11 +49,11 @@ const Learning = () => {
     useEffect(() => {
         if (!currentUser?._id && course.code) {
             navigate('/courses/' + course.code, { replace: true });
-        } else {
-            navigate('/', { replace: true });
+        } else if (!currentUser?._id) {
+            navigate('/login', { replace: true });
         }
         dispatch(courseActions.getLearning({ userId: currentUser?._id, courseId: course?._id }));
-        if (currentUser._id && course._id) socketRef.current.emit('addUser', { userId: currentUser._id, courseId: course._id });
+        if (currentUser?._id && course._id) socketRef.current.emit('addUser', { userId: currentUser?._id, courseId: course._id });
     }, [currentUser, navigate, course, dispatch]);
     let listTopics = course.listTopics || [];
     let total = 0;
@@ -120,8 +120,8 @@ const Learning = () => {
     const endVideo = useCallback(() => {
         let obj = learn?.listLessonId?.find((x) => x === lesson._id);
         if (!obj) {
-            dispatch(courseActions.done({ userId: currentUser._id, courseId: course._id, lessonId: lesson._id }));
-            dispatch(courseActions.getLearning({ userId: currentUser._id, courseId: course._id }));
+            dispatch(courseActions.done({ userId: currentUser?._id, courseId: course._id, lessonId: lesson._id }));
+            dispatch(courseActions.getLearning({ userId: currentUser?._id, courseId: course._id }));
         }
     }, [currentUser, course, lesson]);
     return (
@@ -255,8 +255,8 @@ const CommentList = ({ comments }) => {
     listComment.reverse();
     let _comment = listComment.map((c) => {
         return {
-            author: c.userId.fullName,
-            avatar: c.userId.avatar,
+            author: c.userId?.fullName,
+            avatar: c.userId?.avatar,
             content: <p>{c.text}</p>,
             datetime: TimeAgo(c.createdAt),
         };
@@ -275,7 +275,7 @@ const CommentBox = ({ currentUser, course, socketRef, get }) => {
     return (
         <>
             <Comment
-                avatar={<Avatar src={currentUser.avatar} alt="Han Solo" />}
+                avatar={<Avatar src={currentUser?.avatar} alt="Han Solo" />}
                 content={<Editor currentUser={currentUser} course={course} socketRef={socketRef} />}
             />
             {comments.length > 0 && <CommentList comments={comments} />}
@@ -289,7 +289,7 @@ const Editor = ({ currentUser, course, socketRef }) => {
 
     const handleSubmit = () => {
         if (!comment) return;
-        let model = { userId: currentUser._id, courseId: course._id, text: comment };
+        let model = { userId: currentUser?._id, courseId: course._id, text: comment };
         dispatch(commentActions.saveComment(model));
         socketRef.current.emit('sendMessage', { courseId: course._id });
         setComment('');

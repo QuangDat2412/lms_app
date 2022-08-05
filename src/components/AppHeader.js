@@ -99,7 +99,7 @@ const AppHeader = () => {
                         </Dropdown>
                     </div>
                     <Space align="center" style={{ cursor: 'pointer' }}>
-                        {currentUser._id ? (
+                        {currentUser?._id ? (
                             <>
                                 <Dropdown
                                     overlay={
