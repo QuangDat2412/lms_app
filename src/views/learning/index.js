@@ -49,11 +49,12 @@ const Learning = () => {
     useEffect(() => {
         if (!currentUser?._id && course.code) {
             navigate('/courses/' + course.code, { replace: true });
+        } else {
+            navigate('/', { replace: true });
         }
         dispatch(courseActions.getLearning({ userId: currentUser?._id, courseId: course?._id }));
         if (currentUser._id && course._id) socketRef.current.emit('addUser', { userId: currentUser._id, courseId: course._id });
     }, [currentUser, navigate, course, dispatch]);
-
     let listTopics = course.listTopics || [];
     let total = 0;
     listTopics = listTopics.map((t, i) => {
