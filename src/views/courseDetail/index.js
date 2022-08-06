@@ -43,7 +43,6 @@ const CourseDetail = () => {
     }, 0);
     const times = listTopics.reduce((p, n) => {
         let ll = n.listLessons;
-        ll = n.listLessons;
         let t = ll.reduce((p, n) => {
             return p + n?.time || 0;
         }, 0);
