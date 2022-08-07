@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, courseSelector } from 'src/redux/course/course.slice';
 import { authSelector } from 'src/redux/auth/auth.slice';
 import './index.scss';
-import { ApartmentOutlined } from '@ant-design/icons';
+import { ApartmentOutlined, PlaySquareOutlined, FlagOutlined, StarOutlined } from '@ant-design/icons';
 import { Card, Button, Col, Row, Space, Collapse, Typography, List } from 'antd';
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
@@ -86,7 +86,7 @@ const CourseDetail = () => {
                     }}
                 >
                     <Card style={{ minHeight: '100%' }}>
-                        <Row gutter={16}>
+                        <Row gutter={[16, 16]}>
                             <Col span={24}>
                                 <Title>
                                     <strong>{course.name}</strong>
@@ -216,15 +216,15 @@ const CourseDetail = () => {
                                             {course.type?.name}
                                         </List.Item>
                                         <List.Item>
-                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            <PlaySquareOutlined style={{ marginRight: '20px' }} />
                                             {'Tổng số ' + lessonCount + ' bài học'}
                                         </List.Item>
                                         <List.Item>
-                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            <FlagOutlined style={{ marginRight: '20px' }} />
                                             {'Thời lượng ' + secondsToHms(times)}
                                         </List.Item>
                                         <List.Item>
-                                            <ApartmentOutlined style={{ marginRight: '20px' }} />
+                                            <StarOutlined style={{ marginRight: '20px' }} />
                                             Học mọi lúc, mọi nơi
                                         </List.Item>
                                     </List>

@@ -75,7 +75,7 @@ const AppHeader = () => {
 
     return (
         <>
-            <Header className="header" style={{ backgroundColor: '#f2ce5f' }}>
+            <Header className="header" style={{ backgroundColor: '#f2ce5f' }} id='header'>
                 <div style={{ display: 'flex', justifyContent: 'space-between', height: '100%' }}>
                     <a href="/" style={{ textDecoration: 'none', color: '#fff', display: 'inline-flex', alignItems: 'center' }}>
                         <img src={logo} height={40} alt="Logo" style={{ cursor: 'pointer' }} />

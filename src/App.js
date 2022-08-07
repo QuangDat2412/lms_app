@@ -10,6 +10,7 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'));
 const Learning = React.lazy(() => import('./views/learning'));
+const Home = React.lazy(() => import('./views/home'));
 
 const App = () => {
     const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const App = () => {
                 <Routes>
                     <Route exact path="/login" name="Login Page" element={<Login />} />
                     <Route exact path="/learning/:code" name="Learning Page" element={<Learning />} />
+                    <Route exact path="/" name="Home Page" element={<Home />} />
                     <Route path="/" name="Trang chủ" element={<DefaultLayout />}>
                         {routes.map((route, idx) => {
                             return route.element && <Route key={idx} path={route.path} name={route.name} element={<route.element />} />;

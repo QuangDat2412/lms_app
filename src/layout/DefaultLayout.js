@@ -7,6 +7,7 @@ import AppContent from '../components/AppContent';
 import { authSelector, authActions } from 'src/redux/auth/auth.slice';
 import UploadImage from '../components/uploadImage';
 import { AppHeader } from 'src/components';
+
 const { Footer } = Layout;
 const DefaultLayout = () => {
     const openModal = useSelector(authSelector.openModal);
@@ -45,18 +46,18 @@ const DefaultLayout = () => {
                     textAlign: 'center',
                 }}
             >
-                Bản quyền thuộc về LQD
+                Bản quyền thuộc về <a href="https://www.facebook.com/qdat99/">LQD</a>
             </Footer>
             <Modal visible={openModal} onCancel={closeModal} Modal title={'Chỉnh sửa thông tin'} centered footer={false} width={800} forceRender>
                 <Form form={form} name="control-hooks" onFinish={saveCourse} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]}>
                         <Col span={4}>
                             <Form.Item label="Ảnh đại diện" name="avatar">
                                 <UploadImage type="avatar" setUrl={setUrl} url={link} />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
                             <Form.Item name="email" label="Email">
                                 <Input disabled />
